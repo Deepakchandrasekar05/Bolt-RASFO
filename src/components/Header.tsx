@@ -1,7 +1,15 @@
 import React from 'react';
-import { Brain, Search } from 'lucide-react';
+import { Brain, Search, UserCircle } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
 
-const Header = ({ sidebarCollapsed }: { sidebarCollapsed: boolean }) => {
+interface HeaderProps {
+  sidebarCollapsed: boolean;
+  onNewDocument: () => void;
+}
+
+const Header: React.FC<HeaderProps> = ({ sidebarCollapsed, onNewDocument }) => {
+  const navigate = useNavigate();
+
   return (
     <header className={`fixed top-0 right-0 h-16 transition-all duration-300 ${
       sidebarCollapsed ? 'left-16' : 'left-64'
@@ -24,8 +32,17 @@ const Header = ({ sidebarCollapsed }: { sidebarCollapsed: boolean }) => {
         </div>
 
         <div className="flex items-center gap-4">
-          <button className="px-4 py-2 bg-primary text-primary-foreground rounded-lg text-sm hover:bg-primary/90 transition-colors">
+          <button 
+            onClick={onNewDocument}
+            className="px-4 py-2 bg-primary text-primary-foreground rounded-lg text-sm hover:bg-primary/90 transition-colors"
+          >
             New Document
+          </button>
+          <button 
+            onClick={() => navigate('/account')}
+            className="p-2 hover:bg-secondary rounded-full transition-colors"
+          >
+            <UserCircle className="h-6 w-6" />
           </button>
         </div>
       </div>

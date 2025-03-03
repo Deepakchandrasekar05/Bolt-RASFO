@@ -2,48 +2,64 @@ import React from 'react';
 import { 
   FileText, 
   PenTool, 
-  Image, 
-  BookOpen, 
+  Image,
   Settings,
-  ChevronLeft
+  ChevronLeft,
+  Menu
 } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
-const Sidebar = ({ collapsed, setCollapsed }: { collapsed: boolean, setCollapsed: (value: boolean) => void }) => {
+interface SidebarProps {
+  collapsed: boolean;
+  setCollapsed: (value: boolean) => void;
+  onImageToLatex: () => void;
+  onDiagramTool: () => void;
+}
+
+const Sidebar: React.FC<SidebarProps> = ({ 
+  collapsed, 
+  setCollapsed,
+  onImageToLatex,
+  onDiagramTool
+}) => {
   const menuItems = [
-    { icon: FileText, label: 'Document Editor' },
-    { icon: PenTool, label: 'Diagram Tool' },
-    { icon: Image, label: 'Image to LaTeX' },
-    { icon: BookOpen, label: 'PDF Editor' },
-    { icon: Settings, label: 'Settings' },
+    { icon: FileText, label: 'Document Editor', path: '/' },
+    { icon: PenTool, label: 'Diagram Tool', onClick: onDiagramTool },
+    { icon: Image, label: 'Image to LaTeX', onClick: onImageToLatex },
+    { icon: Settings, label: 'Settings', path: '/settings' },
   ];
 
   return (
     <div className={`h-screen bg-card fixed left-0 top-0 transition-all duration-300 ${
       collapsed ? 'w-16' : 'w-64'
     } border-r border-border`}>
-      <div className="flex items-center justify-end p-4">
+      <div className="flex items-center justify-between p-4">
+        {!collapsed && <span className="font-semibold">Menu</span>}
         <button
           onClick={() => setCollapsed(!collapsed)}
           className="p-2 rounded-lg hover:bg-secondary transition-colors"
         >
-          <ChevronLeft className={`h-5 w-5 transition-transform ${
-            collapsed ? 'rotate-180' : ''
-          }`} />
+          {collapsed ? <Menu className="h-5 w-5" /> : <ChevronLeft className="h-5 w-5" />}
         </button>
       </div>
       
       <nav className="mt-4">
-        {menuItems.map((item, index) => (
-          <button
-            key={index}
-            className="w-full flex items-center px-4 py-3 text-sm hover:bg-secondary transition-colors"
-          >
-            <item.icon className="h-5 w-5 min-w-5" />
-            {!collapsed && (
-              <span className="ml-3 whitespace-nowrap">{item.label}</span>
-            )}
-          </button>
-        ))}
+        {menuItems.map((item, index) => {
+          const Component = item.path ? Link : 'button';
+          return (
+            <Component
+              key={index}
+              to={item.path}
+              onClick={item.onClick}
+              className="w-full flex items-center px-4 py-3 text-sm hover:bg-secondary transition-colors"
+            >
+              <item.icon className="h-5 w-5 min-w-5" />
+              {!collapsed && (
+                <span className="ml-3 whitespace-nowrap">{item.label}</span>
+              )}
+            </Component>
+          );
+        })}
       </nav>
     </div>
   );
